@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    background-color: #FCFAF5;
+    color: #2b1f17;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: #F2AA00; color: #893B0B; }
+
+/* Hide injected Emergent badge */
+#emergent-badge { display: none !important; }
+
+@layer base {
+    :root {
+        --background: 40 60% 97%;
+        --foreground: 22 64% 16%;
+        --card: 0 0% 100%;
+        --card-foreground: 22 64% 16%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 22 64% 16%;
+        --primary: 18 75% 44%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 41 100% 85%;
+        --secondary-foreground: 22 64% 16%;
+        --muted: 41 50% 95%;
+        --muted-foreground: 22 20% 40%;
+        --accent: 41 100% 85%;
+        --accent-foreground: 22 64% 16%;
+        --destructive: 0 84% 50%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 30 30% 90%;
+        --input: 30 30% 90%;
+        --ring: 41 100% 47%;
+        --radius: 0.75rem;
+    }
+}
+
+@layer base {
+    * { @apply border-border; }
+    body { @apply bg-background text-foreground; }
+    h1, h2, h3, h4 { font-family: 'Fraunces', serif; letter-spacing: -0.01em; }
+}
+
+/* Custom scrollbar for horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Grain overlay */
+.grain::before {
+    content: "";
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(137,59,11,0.06) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.5;
+}
+
+/* Patente borders */
+.patente-tradicional { border-color: #893B0B; }
+.patente-gourmet { border-color: #C34D1D; }
+.patente-premium { border-color: #F2AA00; }
+.patente-especial { border-color: #1F2937; }
+
+@layer base {
+    [data-debug-wrapper="true"] { display: contents !important; }
+}
