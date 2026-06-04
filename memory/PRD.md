@@ -1,43 +1,32 @@
 # Gratinalli Speteria — PRD
 
-## Problema / Objetivo
-Plataforma de delivery + admin para uma espetaria (Gratinalli Speteria), com catálogo de 38 espetinhos, checkout com cálculo real de frete via Google Distance Matrix, painel administrativo Kanban, e login com Google OAuth.
-
-## Personas
-- **Cliente**: navega catálogo, monta carrinho, finaliza pedido com endereço e frete calculado.
-- **Admin**: gerencia produtos, promoções, configurações da loja (aberta/fechada, sol/chuva, tarifas de frete), acompanha pedidos via Kanban e histórico.
-
-## Stack
-- Backend: FastAPI + motor (MongoDB) + bcrypt + PyJWT + google-auth + httpx
-- Frontend: React 19 + React Router 7 + Tailwind + Shadcn UI + @react-oauth/google + sonner
-- Tipografia: Fraunces (headings) + Outfit (body)
-- Paleta: #C34D1D, #F2AA00, #893B0B, #FFE9B0, fundo #FCFAF5
-
-## Core Requirements (Static)
-1. Catálogo de 38 espetinhos em 8 categorias e 4 patentes.
-2. Carrinho persistido em localStorage (`gratinalli_cart_v1`).
-3. Checkout com endereço (ViaCEP) e frete real (Google Distance Matrix).
-4. Autenticação: JWT custom + Google OAuth real.
-5. ProfileCompletionModal bloqueante (nome+telefone+endereço) para clientes.
-6. Painel admin: Kanban, Produtos, Promoções, Histórico, Configurações.
-7. Loja fechada bloqueia rotas cliente (`StoreClosed`), admin segue normal.
-
 ## Iterações Concluídas
-- **Iter 1 (MVP)**: catálogo, carrinho, checkout, auth JWT, admin completo, seed. 22/22 testes backend.
-- **Iter 2**: imagens reais, Google Distance Matrix, Settings dinâmicos, OrderDetailsModal (Imprimir/WhatsApp/Maps), AdminTopbar com toggles. 15/15 testes backend.
-- **Iter 3**: Google OAuth real, JWT 30 dias, ProfileCompletionModal bloqueante, mobile redesign, logos oficiais. 8/8 testes backend.
-- **Iter 4 (handoff atual — 2026-01)**: clone do repo público, instalação de deps, restauração das envs (JWT_SECRET, ADMIN_*, GOOGLE_*), validação de boot. Backend up, 38 produtos seed, frontend compilado e renderizando home corretamente.
+- **Iter 1–3** (handoff): MVP, integrações, Google OAuth, mobile redesign — todos OK.
+- **Iter 4 (handoff atual — 2026-01)**: clone do repo, instalação, restauração das envs, boot validado.
+- **Iter 5 (esta sessão)**: 5 mudanças solicitadas pelo usuário.
 
-## Backlog Priorizado
-- P1 📲 Importar `picture` e `name` do Google direto no perfil (pular passo 1 do modal).
-- P1 💬 Notificações WhatsApp Business (Twilio) automáticas no Kanban (precisa credenciais Twilio do usuário).
-- P2 🎁 Cupons de desconto por categoria/patente.
-- P2 ⭐ Avaliação pós-entrega (1–5 estrelas + comentário).
-- P2 📊 Gráficos de venda no histórico admin (recharts já instalado).
-- P3 🔔 WebSocket no Kanban (substituir polling de 6s).
+## Iter 5 — Mudanças aplicadas
+1. ✅ **CartModal com endereço + frete automático**: novo seletor de endereços (DropdownMenu) pré-preenchido com o endereço principal; frete recalculado via `/api/delivery/quote` ao abrir o sheet; cache local em `gratinalli_quote_cache_v1`; passa endereço selecionado ao Checkout via `gratinalli_selected_addr_id`. Subtotal + frete + total visíveis no rodapé do carrinho.
+2. ✅ **Kanban reestruturado**: 3 colunas ativas no topo (Recebido / Em preparo / Saiu para entrega) + seção "Finalizados" recolhível/expansível abaixo com scroll horizontal (Entregue + Cancelado), até 15 cards, botão "Ver todos" abre modal com todos.
+3. ✅ **Cancelar pedido c/ motivo**:
+   - Backend: `OrderStatusPatch` agora aceita `cancel_reason: Optional[str] = None`; handler grava `cancel_reason` e `cancelled_at` quando `status=cancelled`.
+   - Admin: botão "Cancelar pedido" no OrderDetailsModal → `CancelOrderDialog` com 7 motivos pré-definidos + opção "Outro" (campo livre). Atualiza estado e fecha modal.
+   - Cliente: `MyOrders.jsx` polleia a cada 8s; ao detectar transição para `cancelled`, exibe popup `customer-cancel-notice` com o motivo. Notificação registrada em `gratinalli_cancel_notified_v1` para não repetir.
+4. ✅ **Sparkles removidos**: imports e uso retirados de `PromoChips`, `PromotionDetail`, `AdminLayout` e `lib/data.js` (emoji de "Todos"). Source 100% limpo.
+5. ⚠️ **Google OAuth rejeitado**: o domínio do preview precisa estar em **Authorized JavaScript origins** do OAuth Client no Google Cloud Console. Instruções entregues ao usuário (somente ele pode editar no Console).
 
-## Endpoints (todos `/api`)
-Auth, Catálogo, Pedido, Logística, Settings — todos descritos no handoff.
+## Testes
+- Backend: **12/12 PASS** em `/app/backend/tests/test_iteration4_cancel_reason.py` contra `localhost:8001` (iteration_5.json).
+- Frontend e2e: não rodado nesta iteração devido a issue de plataforma (ingress).
 
-## Próxima Tarefa
-Aguardando direcionamento do usuário para escolher próxima iteração do backlog.
+## ⚠️ Bloqueios de Plataforma (ação do usuário)
+1. **Ingress /api/* retorna 404 no preview**: `https://gratinalli-spets.preview.emergentagent.com/api/*` está retornando Cloudflare 404, embora o backend rode em `localhost:8001`. → **Solução**: usuário precisa **redeploy/restart preview** pelo painel Emergent.
+2. **Cloudflare cache de `bundle.js`**: o preview está servindo um JS antigo (com Sparkles). Após redeploy, o cache deve renovar; alternativamente, aguardar TTL ou hard-refresh (Ctrl+Shift+R).
+3. **Google OAuth**: usuário precisa adicionar `https://gratinalli-spets.preview.emergentagent.com` em "Authorized JavaScript origins" do OAuth Client `154505935171-...` no Google Cloud Console.
+
+## Backlog
+- P1 📲 Importar `picture`/`name` do Google direto no perfil.
+- P1 💬 WhatsApp Business (Twilio) automático no Kanban.
+- P2 🎁 Cupons, ⭐ avaliações, 📊 gráficos admin, 🔔 WebSocket Kanban.
+- P2 Validar `cancel_reason` com `min_length=1, max_length=200`.
+- P3 Validar transições de status no backend (não permitir reverter `delivered → received`).
