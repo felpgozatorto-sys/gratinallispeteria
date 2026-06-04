@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { api, formatBRL, formatApiError } from "@/lib/api";
 import { CATEGORIES, PATENTES } from "@/lib/data";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, ChevronRight } from "lucide-react";
+import { Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, ChevronRight, Search } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import AdminTopbar from "@/components/app/AdminTopbar";
 
@@ -15,6 +15,7 @@ export default function AdminProducts() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(empty);
@@ -66,7 +67,17 @@ export default function AdminProducts() {
     await load();
   };
 
-  const filtered = filter === "all" ? items : items.filter((i) => i.category === filter);
+  const q = query.trim().toLowerCase();
+  const filtered = items.filter((i) => {
+    if (filter !== "all" && i.category !== filter) return false;
+    if (!q) return true;
+    return (
+      i.name.toLowerCase().includes(q) ||
+      (i.weight || "").toLowerCase().includes(q) ||
+      (CATEGORIES.find((c) => c.id === i.category)?.label || "").toLowerCase().includes(q) ||
+      (PATENTES[i.patente]?.label || "").toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div>
@@ -74,7 +85,14 @@ export default function AdminProducts() {
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <h1 className="font-heading text-3xl text-marrom">Produtos</h1>
-          <p className="text-marrom/60 text-sm">{items.length} cadastrados · ative/desative, edite preços e crie promoções.</p>
+          <p className="text-marrom/60 text-sm">
+            {items.length} cadastrados · ative/desative, edite preços e crie promoções.
+            {(query || filter !== "all") && (
+              <span className="ml-1 text-terracota font-semibold" data-testid="admin-products-filtered-count">
+                ({filtered.length} no filtro)
+              </span>
+            )}
+          </p>
         </div>
         <button
           data-testid="admin-new-product-button"
@@ -85,7 +103,28 @@ export default function AdminProducts() {
         </button>
       </div>
 
-      <div className="relative mt-4">
+      <div className="mt-4 relative">
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-marrom/40" />
+        <input
+          data-testid="admin-products-search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar por nome, gramatura, categoria ou patente..."
+          className="w-full h-11 pl-11 pr-10 rounded-2xl border border-baunilha bg-white text-marrom focus:outline-none focus:ring-2 focus:ring-dourado/60"
+        />
+        {query && (
+          <button
+            data-testid="admin-products-search-clear"
+            onClick={() => setQuery("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-marrom/40 hover:text-marrom"
+            aria-label="Limpar busca"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      <div className="relative mt-3">
         <div data-testid="admin-products-filter-scroll" className="flex gap-2 overflow-x-auto no-scrollbar -mx-2 px-2 pb-1 snap-x">
           <button onClick={()=>setFilter("all")} className={`snap-start shrink-0 h-9 px-3 rounded-full text-sm whitespace-nowrap ${filter==="all" ? "bg-marrom text-white" : "bg-white border border-baunilha text-marrom"}`}>Todos</button>
           {CATEGORIES.filter(c=>c.id!=="all").map(c => (
@@ -112,6 +151,9 @@ export default function AdminProducts() {
               </tr>
             </thead>
             <tbody>
+              {filtered.length === 0 && (
+                <tr><td colSpan={7} className="p-6 text-center text-marrom/50" data-testid="admin-products-empty">Nenhum produto encontrado.</td></tr>
+              )}
               {filtered.map((p) => {
                 const pat = PATENTES[p.patente] ?? PATENTES.tradicional;
                 return (

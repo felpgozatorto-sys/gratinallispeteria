@@ -6,6 +6,7 @@ load_dotenv(ROOT_DIR / ".env")
 
 import os
 import uuid
+import math
 import logging
 import bcrypt
 import jwt
@@ -642,10 +643,14 @@ async def delivery_quote(body: CepQuoteIn):
         min_fee = float(settings.get("min_fee", 5.99))
         per_km = float(settings.get("fee_per_km", 1.80))
 
-    fee = max(min_fee, round(min_fee + per_km * max(0.0, distance_km - 1.0), 2))
-    fee = round(fee, 2)
+    # Distance is always rounded UP to the next integer km (no fractional km billing).
+    km_billed = int(math.ceil(distance_km))
+    raw_fee = min_fee + per_km * km_billed
+    # Final fee is rounded UP to the nearest R$ 0.50 (no broken cents).
+    fee = math.ceil(max(min_fee, raw_fee) * 2.0) / 2.0
     return {
         "distance_km": distance_km,
+        "billed_km": km_billed,
         "duration_min": duration_min,
         "fee": fee,
         "weather": weather,
