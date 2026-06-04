@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Minus, Plus, Trash2, X, ShoppingBag, MapPin, ChevronDown, Plus as PlusIcon } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, MapPin, ChevronDown, Plus as PlusIcon } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { api, formatBRL, formatApiError } from "@/lib/api";
@@ -98,9 +98,6 @@ export default function CartModal() {
           <SheetTitle className="font-heading text-2xl text-marrom flex items-center gap-2">
             <ShoppingBag size={20} /> Seu carrinho
           </SheetTitle>
-          <button onClick={() => setOpen(false)} aria-label="Fechar" className="text-marrom/60 hover:text-marrom">
-            <X size={20} />
-          </button>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-6 py-4">
