@@ -202,6 +202,7 @@ class OrderIn(BaseModel):
 
 class OrderStatusPatch(BaseModel):
     status: Literal["received", "preparing", "out_for_delivery", "delivered", "cancelled"]
+    cancel_reason: Optional[str] = None
 
 
 class CepQuoteIn(BaseModel):
