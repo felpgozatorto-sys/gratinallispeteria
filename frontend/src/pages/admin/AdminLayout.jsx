@@ -1,12 +1,12 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Package, Sparkles, History, LogOut, Settings } from "lucide-react";
+import { LayoutDashboard, Package, Tag, History, LogOut, Settings } from "lucide-react";
 
 const NAV = [
   { to: "/admin", label: "Pedidos", icon: LayoutDashboard, end: true },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
-  { to: "/admin/promocoes", label: "Promoções", icon: Sparkles },
+  { to: "/admin/promocoes", label: "Promoções", icon: Tag },
   { to: "/admin/historico", label: "Histórico", icon: History },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];

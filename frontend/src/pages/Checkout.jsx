@@ -29,8 +29,13 @@ export default function Checkout() {
   const [successOrder, setSuccessOrder] = useState(null);
 
   useEffect(() => {
-    // Prefill from saved primary address
-    const saved = (user?.addresses || []).find((a) => a.primary) || user?.addresses?.[0];
+    // Prefer the address chosen in the CartModal; fall back to primary
+    let chosen = null;
+    try {
+      const cid = localStorage.getItem("gratinalli_selected_addr_id");
+      if (cid) chosen = (user?.addresses || []).find((a) => a.id === cid);
+    } catch {}
+    const saved = chosen || (user?.addresses || []).find((a) => a.primary) || user?.addresses?.[0];
     if (saved) {
       setCep(saved.cep);
       setAddress({
@@ -39,6 +44,12 @@ export default function Checkout() {
       });
       setNumber(saved.number || "");
       setComplement(saved.complement || "");
+      // Use cached quote (filled by CartModal) without waiting for backend
+      try {
+        const cache = JSON.parse(localStorage.getItem("gratinalli_quote_cache_v1") || "{}");
+        const digits = (saved.cep || "").replace(/\D/g, "");
+        if (cache[digits]) setQuote(cache[digits]);
+      } catch {}
     }
     if (user?.phone) setPhone(user.phone);
   }, [user]);

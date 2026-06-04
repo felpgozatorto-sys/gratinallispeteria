@@ -534,9 +534,13 @@ async def all_orders(_: dict = Depends(require_admin)):
 
 @api.patch("/orders/{oid}/status")
 async def update_order_status(oid: str, body: OrderStatusPatch, _: dict = Depends(require_admin)):
+    update = {"status": body.status, "updated_at": datetime.now(timezone.utc).isoformat()}
+    if body.status == "cancelled" and body.cancel_reason:
+        update["cancel_reason"] = body.cancel_reason
+        update["cancelled_at"] = datetime.now(timezone.utc).isoformat()
     res = await db.orders.update_one(
         {"id": oid},
-        {"$set": {"status": body.status, "updated_at": datetime.now(timezone.utc).isoformat()}},
+        {"$set": update},
     )
     if res.matched_count == 0:
         raise HTTPException(404, "Pedido não encontrado")

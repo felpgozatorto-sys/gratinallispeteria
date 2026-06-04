@@ -1,5 +1,5 @@
 export const CATEGORIES = [
-  { id: "all", label: "Todos", emoji: "✨" },
+  { id: "all", label: "Todos", emoji: "" },
   { id: "bovinos", label: "Bovinos", emoji: "🥩" },
   { id: "frango", label: "Frango", emoji: "🍗" },
   { id: "suinos", label: "Suínos", emoji: "🐖" },

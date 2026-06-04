@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api } from "@/lib/api";
 import ProductCard from "@/components/app/ProductCard";
-import { Sparkles, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function PromotionDetail() {
   const { id } = useParams();
@@ -44,7 +44,6 @@ export default function PromotionDetail() {
       ) : (
         <>
           <section className="mt-4 rounded-3xl p-8 sm:p-12 text-baunilha relative overflow-hidden" style={{ background: "linear-gradient(135deg, #893B0B 0%, #C34D1D 100%)" }}>
-            <Sparkles className="text-dourado mb-3" />
             <h1 className="font-heading text-4xl sm:text-6xl font-bold leading-none">{promo.title}</h1>
             {promo.subtitle && <p className="mt-3 text-lg opacity-95 max-w-2xl">{promo.subtitle}</p>}
             {promo.discount_pct ? (

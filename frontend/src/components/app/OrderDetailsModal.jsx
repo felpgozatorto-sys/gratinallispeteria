@@ -1,7 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { formatBRL } from "@/lib/api";
+import { api, formatBRL } from "@/lib/api";
 import { Printer, MessageCircle, Map, X, Clock, ChefHat, Bike, CheckCircle2, XCircle } from "lucide-react";
+import CancelOrderDialog from "@/components/app/CancelOrderDialog";
+import { toast } from "sonner";
 
 const STATUS = {
   received: { label: "Recebido", icon: Clock, color: "#F2AA00" },
@@ -18,7 +20,9 @@ const PAYMENT_LABEL = {
   cash: "Dinheiro",
 };
 
-export default function OrderDetailsModal({ open, onOpenChange, order, onPrint }) {
+export default function OrderDetailsModal({ open, onOpenChange, order, onPrint, isAdmin = false, onUpdated }) {
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const st = order ? STATUS[order.status] || STATUS.received : null;
 
   const mapsUrl = useMemo(() => {
@@ -39,6 +43,25 @@ export default function OrderDetailsModal({ open, onOpenChange, order, onPrint }
   }, [order]);
 
   if (!order) return null;
+
+  const canCancel = isAdmin && order.status !== "delivered" && order.status !== "cancelled";
+
+  const confirmCancel = async (reason) => {
+    setCancelling(true);
+    try {
+      const { data } = await api.patch(`/orders/${order.id}/status`, {
+        status: "cancelled",
+        cancel_reason: reason,
+      });
+      toast.success("Pedido cancelado");
+      setCancelOpen(false);
+      if (onUpdated) onUpdated(data);
+    } catch (e) {
+      toast.error("Erro ao cancelar pedido");
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   const print = () => {
     if (onPrint) return onPrint(order);
@@ -176,8 +199,31 @@ export default function OrderDetailsModal({ open, onOpenChange, order, onPrint }
           >
             <Map size={16}/> Abrir no Maps
           </a>
+          {canCancel && (
+            <button
+              data-testid="order-cancel-button"
+              onClick={() => setCancelOpen(true)}
+              className="h-11 px-4 rounded-full bg-red-600 text-white font-semibold inline-flex items-center gap-2 hover:bg-red-700 ml-auto"
+            >
+              <XCircle size={16}/> Cancelar pedido
+            </button>
+          )}
         </div>
+
+        {order.status === "cancelled" && order.cancel_reason && (
+          <div className="mx-5 mb-5 p-3 rounded-2xl bg-red-50 border border-red-200 text-sm text-red-800">
+            <div className="font-semibold flex items-center gap-1"><XCircle size={14}/> Pedido cancelado</div>
+            <div className="mt-0.5 text-red-700/90">Motivo: {order.cancel_reason}</div>
+          </div>
+        )}
       </DialogContent>
+      <CancelOrderDialog
+        open={cancelOpen}
+        onOpenChange={setCancelOpen}
+        order={order}
+        loading={cancelling}
+        onConfirm={confirmCancel}
+      />
     </Dialog>
   );
 }

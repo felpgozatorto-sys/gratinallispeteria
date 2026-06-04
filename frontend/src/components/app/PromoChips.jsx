@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles } from "lucide-react";
 
+// promo chips renderer
 export default function PromoChips({ promotions = [] }) {
   const navigate = useNavigate();
   if (!promotions.length) return null;
@@ -27,7 +27,6 @@ export default function PromoChips({ promotions = [] }) {
             style={{ background: c.bg, color: c.fg }}
           >
             <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full opacity-30" style={{ background: c.accent }} />
-            <Sparkles className="opacity-80" size={20} />
             <div className="mt-6">
               <div className="text-xs uppercase tracking-widest opacity-80">Promoção</div>
               <div className="font-heading font-bold text-xl leading-tight mt-1 line-clamp-2">{p.title}</div>

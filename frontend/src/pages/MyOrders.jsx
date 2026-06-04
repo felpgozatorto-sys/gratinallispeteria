@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { api, formatBRL } from "@/lib/api";
 import { CheckCircle2, Clock, Bike, ChefHat, XCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const STATUS_FLOW = [
   { id: "received", label: "Recebido", icon: Clock },
@@ -9,14 +10,55 @@ const STATUS_FLOW = [
   { id: "delivered", label: "Entregue", icon: CheckCircle2 },
 ];
 
+const NOTIFIED_KEY = "gratinalli_cancel_notified_v1";
+
+function readNotified() {
+  try { return JSON.parse(localStorage.getItem(NOTIFIED_KEY) || "[]"); } catch { return []; }
+}
+function writeNotified(arr) {
+  try { localStorage.setItem(NOTIFIED_KEY, JSON.stringify(arr)); } catch {}
+}
+
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cancelNotice, setCancelNotice] = useState(null);
+  const seenRef = useRef(null);
 
   useEffect(() => {
     const load = async () => {
       try {
         const { data } = await api.get("/orders/mine");
+        // Detect newly cancelled orders for client notification (not seen on first load)
+        if (seenRef.current !== null) {
+          const prevMap = new Map(seenRef.current.map((o) => [o.id, o.status]));
+          const notified = readNotified();
+          for (const o of data) {
+            if (
+              o.status === "cancelled" &&
+              prevMap.get(o.id) &&
+              prevMap.get(o.id) !== "cancelled" &&
+              !notified.includes(o.id)
+            ) {
+              setCancelNotice(o);
+              notified.push(o.id);
+              writeNotified(notified);
+              break;
+            }
+          }
+        } else {
+          // First load: surface cancellations that occurred while user was away (once per session)
+          const notified = readNotified();
+          const fresh = data.find(
+            (o) => o.status === "cancelled" && !notified.includes(o.id)
+          );
+          if (fresh) {
+            setCancelNotice(fresh);
+            notified.push(fresh.id);
+            writeNotified(notified);
+          }
+        }
+        seenRef.current = data;
         setOrders(data);
       } finally {
         setLoading(false);
@@ -56,7 +98,12 @@ export default function MyOrders() {
 
                 <div className="mt-4">
                   {isCancelled ? (
-                    <div className="inline-flex items-center gap-2 text-red-700 font-semibold"><XCircle size={16}/> Pedido cancelado</div>
+                    <div>
+                      <div className="inline-flex items-center gap-2 text-red-700 font-semibold"><XCircle size={16}/> Pedido cancelado</div>
+                      {o.cancel_reason && (
+                        <div className="mt-1 text-sm text-red-700/80">Motivo: {o.cancel_reason}</div>
+                      )}
+                    </div>
                   ) : (
                     <ol className="flex items-center gap-3 overflow-x-auto no-scrollbar">
                       {STATUS_FLOW.map((s, idx) => {
@@ -98,6 +145,42 @@ export default function MyOrders() {
           })}
         </ul>
       )}
+
+      <Dialog open={!!cancelNotice} onOpenChange={(o) => !o && setCancelNotice(null)}>
+        <DialogContent data-testid="customer-cancel-notice" className="max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-2xl text-marrom flex items-center gap-2">
+              <XCircle className="text-red-600"/> Pedido cancelado
+            </DialogTitle>
+          </DialogHeader>
+          {cancelNotice && (
+            <div className="mt-2 space-y-3">
+              <p className="text-sm text-marrom/80">
+                Seu pedido <span className="font-mono font-bold">#{cancelNotice.id.slice(0,8).toUpperCase()}</span> foi cancelado pela loja.
+              </p>
+              {cancelNotice.cancel_reason && (
+                <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-sm text-red-800">
+                  <div className="font-semibold">Motivo informado pela loja:</div>
+                  <div className="mt-0.5">{cancelNotice.cancel_reason}</div>
+                </div>
+              )}
+              <p className="text-xs text-marrom/60">
+                Caso tenha sido pago via Pix, o estorno será efetuado em até 1 dia útil.
+                Em caso de dúvidas, entre em contato pelo WhatsApp da loja.
+              </p>
+            </div>
+          )}
+          <div className="mt-4 flex justify-end">
+            <button
+              data-testid="customer-cancel-notice-ok"
+              onClick={() => setCancelNotice(null)}
+              className="h-11 px-5 rounded-full bg-terracota text-white font-semibold hover:bg-marrom"
+            >
+              Entendi
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
