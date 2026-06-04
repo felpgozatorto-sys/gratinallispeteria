@@ -19,10 +19,11 @@
 - Backend: **12/12 PASS** em `/app/backend/tests/test_iteration4_cancel_reason.py` contra `localhost:8001` (iteration_5.json).
 - Frontend e2e: não rodado nesta iteração devido a issue de plataforma (ingress).
 
-## ⚠️ Bloqueios de Plataforma (ação do usuário)
-1. **Ingress /api/* retorna 404 no preview**: `https://gratinalli-spets.preview.emergentagent.com/api/*` está retornando Cloudflare 404, embora o backend rode em `localhost:8001`. → **Solução**: usuário precisa **redeploy/restart preview** pelo painel Emergent.
-2. **Cloudflare cache de `bundle.js`**: o preview está servindo um JS antigo (com Sparkles). Após redeploy, o cache deve renovar; alternativamente, aguardar TTL ou hard-refresh (Ctrl+Shift+R).
-3. **Google OAuth**: usuário precisa adicionar `https://gratinalli-spets.preview.emergentagent.com` em "Authorized JavaScript origins" do OAuth Client `154505935171-...` no Google Cloud Console.
+## ⚠️ Bloqueios resolvidos
+1. ✅ **Domínio correto do preview**: `https://delivery-kanban.preview.emergentagent.com` (não o `gratinalli-spets.*` do handoff antigo). `frontend/.env` atualizado.
+2. ✅ Backend conectado e retornando 38 produtos + 3 promoções.
+3. ✅ Sparkles 100% fora do bundle (validado com `document.querySelectorAll('svg.lucide-sparkles').length === 0`).
+4. ⚠️ **Google OAuth**: usuário precisa adicionar `https://delivery-kanban.preview.emergentagent.com` em "Authorized JavaScript origins" do OAuth Client `154505935171-...` no Google Cloud Console.
 
 ## Backlog
 - P1 📲 Importar `picture`/`name` do Google direto no perfil.
