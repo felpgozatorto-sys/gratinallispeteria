@@ -13,7 +13,7 @@ export default function AuthPromptModal() {
     <Dialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt}>
       <DialogContent data-testid="auth-prompt-modal" className="sm:max-w-md bg-white">
         <DialogHeader>
-          <DialogTitle className="font-heading text-2xl text-marrom">Bem-vindo à Gratinalli</DialogTitle>
+          <DialogTitle className="font-heading text-2xl text-marrom">Bem-vindo à Gratinnari</DialogTitle>
           <DialogDescription className="text-marrom/70">
             Faça login para ver os preços e finalizar o pedido. Você também pode continuar navegando — os preços ficam ocultos até logar.
           </DialogDescription>

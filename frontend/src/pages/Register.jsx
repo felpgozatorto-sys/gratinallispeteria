@@ -22,7 +22,7 @@ export default function Register() {
     setErr("");
     try {
       await register(name, email, password);
-      toast.success("Conta criada! Boas-vindas à Gratinalli 🔥");
+      toast.success("Conta criada! Boas-vindas à Gratinnari 🔥");
       navigate(next);
     } catch (e) {
       setErr(formatApiError(e.response?.data?.detail) || e.message);

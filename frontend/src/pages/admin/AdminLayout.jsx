@@ -20,7 +20,7 @@ export default function AdminLayout() {
     <div className="min-h-screen flex bg-cream">
       <aside className="hidden lg:flex flex-col w-64 bg-marrom text-baunilha p-4 sticky top-0 h-screen">
         <div className="flex items-center gap-3 px-2 py-3">
-          <img src="/logo/gratinalli-light.png" alt="Gratinalli Speteria" className="h-12 w-auto" />
+          <img src="/logo/gratinalli-light.png" alt="Gratinnari Speteria" className="h-12 w-auto" />
         </div>
         <div className="text-[10px] uppercase tracking-[0.3em] opacity-70 px-2 -mt-1 mb-2">Painel Admin</div>
         <nav className="mt-6 space-y-1 flex-1">
@@ -51,7 +51,7 @@ export default function AdminLayout() {
 
       <div className="flex-1 min-w-0">
         <header className="lg:hidden sticky top-0 z-30 bg-marrom text-baunilha px-4 py-3 flex items-center justify-between">
-          <img src="/logo/gratinalli-light.png" alt="Gratinalli Speteria" className="h-8 w-auto" />
+          <img src="/logo/gratinalli-light.png" alt="Gratinnari Speteria" className="h-8 w-auto" />
           <button onClick={onLogout} className="text-sm underline">Sair</button>
         </header>
         <main className="p-4 sm:p-6 lg:p-8">

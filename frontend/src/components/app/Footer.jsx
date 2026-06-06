@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="mt-24 bg-marrom text-baunilha">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <img src="/logo/gratinalli-light.png" alt="Gratinalli Speteria" className="h-14 w-auto" />
+          <img src="/logo/gratinalli-light.png" alt="Gratinnari Speteria" className="h-14 w-auto" />
           <p className="mt-3 text-sm opacity-80 leading-relaxed">
             Espetinhos artesanais grelhados no ponto certo. Do tradicional ao premium, levamos sabor até você.
           </p>
@@ -32,7 +32,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-baunilha/15 py-4 text-center text-xs opacity-70">
-        © {new Date().getFullYear()} Gratinalli Speteria. Todos os direitos reservados.
+        © {new Date().getFullYear()} Gratinnari Speteria. Todos os direitos reservados.
       </div>
     </footer>
   );

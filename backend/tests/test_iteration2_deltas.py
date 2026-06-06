@@ -13,7 +13,7 @@ import requests
 BASE_URL = os.environ["REACT_APP_BACKEND_URL"].rstrip("/")
 API = f"{BASE_URL}/api"
 
-ADMIN_EMAIL = "admin@gratinalli.com"
+ADMIN_EMAIL = "admin@gratinnari.com"
 ADMIN_PASSWORD = "admin123"
 
 

@@ -37,7 +37,7 @@ export default function OrderDetailsModal({ open, onOpenChange, order, onPrint, 
     const phone = (order.user_phone || "").replace(/\D/g, "");
     if (!phone) return null;
     const msg = encodeURIComponent(
-      `Olá ${order.user_name?.split(" ")[0] || ""}! Sobre seu pedido #${order.id.slice(0,8).toUpperCase()} na Gratinalli Speteria — `
+      `Olá ${order.user_name?.split(" ")[0] || ""}! Sobre seu pedido #${order.id.slice(0,8).toUpperCase()} na Gratinnari Speteria — `
     );
     return `https://wa.me/55${phone}?text=${msg}`;
   }, [order]);
@@ -85,7 +85,7 @@ export default function OrderDetailsModal({ open, onOpenChange, order, onPrint, 
         .total { font-size: 14px; font-weight: bold; }
       </style>
       </head><body>
-        <h1>GRATINALLI SPETERIA</h1>
+        <h1>GRATINNARI SPETERIA</h1>
         <div class="small" style="text-align:center">Pedido #${order.id.slice(0,8).toUpperCase()}</div>
         <div class="small" style="text-align:center">${new Date(order.created_at).toLocaleString("pt-BR")}</div>
         <hr/>

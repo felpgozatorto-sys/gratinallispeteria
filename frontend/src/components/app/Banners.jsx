@@ -31,7 +31,7 @@ export default function Banners() {
               loading="lazy"
             />
             <div className="relative max-w-3xl px-6 text-center text-white">
-              <div className="text-xs uppercase tracking-[0.3em] opacity-90">Hoje na Gratinalli</div>
+              <div className="text-xs uppercase tracking-[0.3em] opacity-90">Hoje na Gratinnari</div>
               <h2 className="font-heading text-3xl sm:text-5xl font-bold mt-2 leading-tight drop-shadow-lg">
                 {b.title}
               </h2>

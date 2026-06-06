@@ -116,7 +116,7 @@ export default function Header() {
       {/* Desktop layout */}
       <div className="hidden md:flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 items-center gap-4">
         <Link to="/" data-testid="logo-link" className="flex items-center gap-2 shrink-0">
-          <img src="/logo/gratinalli-dark.png" alt="Gratinalli Speteria" className="h-10 w-auto" />
+          <img src="/logo/gratinalli-dark.png" alt="Gratinnari Speteria" className="h-10 w-auto" />
         </Link>
 
         <form onSubmit={onSearch} className="flex-1 max-w-xl">

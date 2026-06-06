@@ -55,7 +55,7 @@ export default function Login() {
         <img src="https://images.unsplash.com/photo-1558030006-450675393462?w=1200&q=80" alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-t from-marrom via-marrom/80 to-marrom/40" />
         <div className="relative z-10 p-12 self-end">
-          <img src="/logo/gratinalli-light.png" alt="Gratinalli Speteria" className="w-72 mb-6" />
+          <img src="/logo/gratinalli-light.png" alt="Gratinnari Speteria" className="w-72 mb-6" />
           <p className="text-baunilha text-lg opacity-90 max-w-md">
             Espetinhos artesanais grelhados no ponto certo. Acesse e veja os melhores combos da casa.
           </p>

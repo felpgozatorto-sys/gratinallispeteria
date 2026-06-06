@@ -10,7 +10,7 @@ export default function StoreClosed() {
   return (
     <div className="min-h-screen grid place-items-center bg-cream p-6 text-center">
       <div className="max-w-md w-full bg-white border border-baunilha rounded-3xl p-8 shadow-sm">
-        <img src="/logo/gratinalli-dark.png" alt="Gratinalli Speteria" className="h-16 w-auto mx-auto" />
+        <img src="/logo/gratinalli-dark.png" alt="Gratinnari Speteria" className="h-16 w-auto mx-auto" />
         <h1 className="font-heading text-4xl text-marrom mt-4">Loja fechada</h1>
         <p className="text-marrom/70 mt-2">
           Estamos descansando o braço da grelha. Volte em breve para mais espetinhos.
