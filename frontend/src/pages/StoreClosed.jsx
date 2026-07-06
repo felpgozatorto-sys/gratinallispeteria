@@ -18,7 +18,7 @@ export default function StoreClosed() {
         <div className="mt-5 inline-flex items-center gap-2 bg-baunilha text-marrom rounded-full px-4 py-2 text-sm">
           <Clock size={14} /> Horário de funcionamento: {horario}
         </div>
-        <Link to="/login" className="block mt-6 text-terracota underline text-sm">Sou administrador</Link>
+        <Link to="/login" className="block mt-6 text-terracota underline text-sm">Login</Link>
       </div>
     </div>
   );
